@@ -1,0 +1,23 @@
+SistemaAgendamento/
+│
+├── index.php
+├── login.php
+├── cadastro.php
+├── logout.php
+├── conexao.php
+├── agendamento.php
+├── listar.php
+├── editar.php
+├── excluir.php
+├── README.md
+│
+├── css/
+│   └── style.css
+│
+├── js/
+│   └── script.js
+│
+├── imagens/
+│
+└── banco/
+    └── banco.sql
