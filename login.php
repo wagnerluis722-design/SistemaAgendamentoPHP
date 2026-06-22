@@ -1,36 +1,39 @@
 <?php
 session_start();
-include "conexao.php";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST["email"];
-    $senha = $_POST["senha"];
-
-    $sql = "SELECT * FROM usuarios WHERE email='$email'";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-
-        if (password_verify($senha, $user["senha"])) {
-            $_SESSION["usuario_id"] = $user["id"];
-            $_SESSION["usuario_nome"] = $user["nome"];
-
-            header("Location: index.php");
-            exit();
-        } else {
-            echo "Senha incorreta!";
-        }
-    } else {
-        echo "Usuário não encontrado!";
-    }
+// Se já estiver logado, vai direto pro dashboard
+if (isset($_SESSION['user_id'])) {
+    header("Location: dashboard.php");
+    exit();
 }
 ?>
 
-<h2>Login</h2>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Sistema de Agendamento</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
-<form method="POST">
-    Email: <input type="email" name="email"><br><br>
-    Senha: <input type="password" name="senha"><br><br>
-    <button type="submit">Entrar</button>
-</form>
+<div class="login-container">
+
+    <h2>Login do Sistema</h2>
+
+    <?php
+    if (isset($_GET['erro'])) {
+        echo "<p style='color:red;text-align:center;'>Usuário ou senha inválidos</p>";
+    }
+    ?>
+
+    <form action="auth.php" method="POST">
+        <input type="text" name="usuario" placeholder="Usuário" required>
+        <input type="password" name="senha" placeholder="Senha" required>
+        <button type="submit">Entrar</button>
+    </form>
+
+</div>
+
+</body>
+</html>
