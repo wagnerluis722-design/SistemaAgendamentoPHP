@@ -1,37 +1,30 @@
 <?php
 session_start();
-include "conexao.php";
+include "includes/conexao.php";
 
-$usuario = $_POST['usuario'];
-$senha = $_POST['senha'];
+$email = $_POST["email"];
+$senha = $_POST["senha"];
 
-/* BUSCA SEGURA NO BANCO */
-$sql = "SELECT id, usuario, senha FROM usuarios WHERE usuario = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $usuario);
+$stmt = $conn->prepare("SELECT * FROM usuarios WHERE email=?");
+$stmt->bind_param("s", $email);
 $stmt->execute();
+
 $result = $stmt->get_result();
+$user = $result->fetch_assoc();
 
-if ($result->num_rows === 1) {
+if ($user && password_verify($senha, $user["senha"])) {
 
-    $row = $result->fetch_assoc();
+$_SESSION["user_id"] = $user["id"];
+$_SESSION["nome"] = $user["nome"];
+$_SESSION["perfil"] = $user["perfil"];
 
-    /* Verificação simples (caso senha não esteja criptografada) */
-    if ($senha == $row['senha']) {
-
-        $_SESSION['user_id'] = $row['id'];
-        $_SESSION['user'] = $row['usuario'];
-
-        header("Location: dashboard.php");
-        exit();
-
-    } else {
-        header("Location: login.php?erro=1");
-        exit();
-    }
+if ($user["perfil"] == "admin") {
+header("Location: admin/dashboard.php");
+} else {
+header("Location: cliente/painel.php");
+}
 
 } else {
-    header("Location: login.php?erro=1");
-    exit();
+echo "Login inválido";
 }
 ?>

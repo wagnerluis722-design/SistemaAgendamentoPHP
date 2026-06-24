@@ -1,31 +1,31 @@
-CREATE DATABASE sistema_aluguel;
-
-USE sistema_aluguel;
-
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100),
-    email VARCHAR(100) UNIQUE,
-    senha VARCHAR(255)
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(120) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    perfil ENUM('admin','cliente') DEFAULT 'cliente',
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE itens (
+CREATE TABLE imoveis (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100),
+    titulo VARCHAR(150) NOT NULL,
     descricao TEXT,
-    valor_diaria DECIMAL(10,2),
-    disponivel BOOLEAN DEFAULT TRUE
+    endereco VARCHAR(200),
+    valor DECIMAL(10,2),
+    status ENUM('Disponível','Alugado') DEFAULT 'Disponível'
 );
 
-CREATE TABLE reservas (
+CREATE TABLE agendamentos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT,
-    item_id INT,
-    data_inicio DATE,
-    data_fim DATE,
-    valor_total DECIMAL(10,2),
-    status VARCHAR(20) DEFAULT 'ATIVA',
+    imovel_id INT,
+    data_agendamento DATE,
+    status ENUM('Pendente','Aprovado','Cancelado') DEFAULT 'Pendente',
 
-    FOREIGN KEY(usuario_id) REFERENCES usuarios(id),
-    FOREIGN KEY(item_id) REFERENCES itens(id)
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (imovel_id) REFERENCES imoveis(id)
+        ON DELETE CASCADE
 );

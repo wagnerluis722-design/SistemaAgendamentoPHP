@@ -1,27 +1,39 @@
 <?php
-include "conexao.php";
+include "includes/conexao.php";
+
+$msg = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nome = $_POST["nome"];
-    $email = $_POST["email"];
-    $senha = password_hash($_POST["senha"], PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO usuarios (nome, email, senha)
-            VALUES ('$nome', '$email', '$senha')";
+$nome = $_POST["nome"];
+$email = $_POST["email"];
+$senha = password_hash($_POST["senha"], PASSWORD_DEFAULT);
 
-    if ($conn->query($sql)) {
-        echo "Usuário cadastrado com sucesso!";
-    } else {
-        echo "Erro: " . $conn->error;
-    }
+// verifica duplicado
+$check = $conn->prepare("SELECT id FROM usuarios WHERE email=?");
+$check->bind_param("s", $email);
+$check->execute();
+$check->store_result();
+
+if ($check->num_rows > 0) {
+$msg = "Email já existe!";
+} else {
+
+$stmt = $conn->prepare("INSERT INTO usuarios (nome,email,senha,perfil) VALUES (?,?,?,'cliente')");
+$stmt->bind_param("sss", $nome, $email, $senha);
+$stmt->execute();
+
+$msg = "Cadastro realizado!";
+}
 }
 ?>
 
 <h2>Cadastro</h2>
+<p><?php echo $msg; ?></p>
 
 <form method="POST">
-    Nome: <input type="text" name="nome"><br><br>
-    Email: <input type="email" name="email"><br><br>
-    Senha: <input type="password" name="senha"><br><br>
-    <button type="submit">Cadastrar</button>
+<input name="nome" placeholder="Nome"><br>
+<input name="email" placeholder="Email"><br>
+<input name="senha" type="password" placeholder="Senha"><br>
+<button>Cadastrar</button>
 </form>
