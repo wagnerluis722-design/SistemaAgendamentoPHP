@@ -46,7 +46,9 @@ Tabelas:
 3. Inicie Apache e MySQL
 4. Importe o banco de dados no phpMyAdmin
 5. Acesse:http://localhost/SistemaAgendamento/
+   
 http://sistemaagendamento.nfy.fyi/cadastro.php
+
 http://sistemaagendamento.nfy.fyi/login.php
 
 
